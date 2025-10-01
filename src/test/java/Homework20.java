@@ -12,7 +12,7 @@ import org.openqa.selenium.WebElement;
 import java.util.List;
 import org.openqa.selenium.Keys;
 
-public class Homework19 {
+public class Homework20 {
 
     @Test
     @Parameters("baseUrl")
@@ -64,11 +64,7 @@ public class Homework19 {
         // assert the banner text
         Assert.assertEquals(successBanner.getText(), "Deleted playlist \"fart.\"");
 
-        try {
-            Thread.sleep(4000);  // 4 seconds to see it
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+
         driver.quit();
     }
 }
