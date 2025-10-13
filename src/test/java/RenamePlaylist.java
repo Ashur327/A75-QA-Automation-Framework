@@ -6,46 +6,49 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+import pages.HomePage;
 import pages.LoginPage;
 
 import java.time.Duration;
 
-public class LoginTests {
+public class RenamePlaylist {
 
     WebDriver driver;
     LoginPage loginPage;
+    HomePage homePage;
 
     @BeforeMethod
     @Parameters("baseUrl")
     public void setup(String baseUrl) {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--remote-allow-origins=*");
+        options.addArguments("--disable-notifications");
 
         driver = new ChromeDriver(options);
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
         driver.get(baseUrl);
 
-        // Initialize Page Object
         loginPage = new LoginPage(driver);
+        homePage = new HomePage(driver);
 
-        // Optional check that the page loaded correctly
-        Assert.assertEquals(driver.getCurrentUrl(), baseUrl);
+        // Login first
+        loginPage.login("ashur.yonan@testpro.io", "eUZgLpQa");
     }
 
     @Test
-    @Parameters({"email", "password", "baseUrl"})
-    public void validLoginTest(String email, String password, String baseUrl) {
-        // Using Page Factory POM to perform login
-        loginPage.login(email, password);
+    public void renamePlaylistTest() {
+        String oldName = "fart";
+        String newName = "fart fart fart";
 
-        // Assert successful login
-        Assert.assertEquals(driver.getCurrentUrl(), baseUrl + "#!/home");
+        homePage.createPlaylistIfNotExists(oldName);
+        homePage.renamePlaylist(oldName, newName);
+
+        Assert.assertEquals(homePage.getSuccessBannerText(),
+                "Updated playlist \"" + newName + "\"");
     }
 
     @AfterMethod
     public void teardown() {
-        if (driver != null) {
-            driver.quit();
-        }
+        if (driver != null) driver.quit();
     }
 }

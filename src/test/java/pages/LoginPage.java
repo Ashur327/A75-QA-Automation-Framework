@@ -1,33 +1,43 @@
 package pages;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 
 public class LoginPage extends BasePage {
 
-    public LoginPage(WebDriver givenDriver) {
-        super(givenDriver);
+    public LoginPage(WebDriver driver) {
+        super(driver);
+        PageFactory.initElements(driver, this); // initialize @FindBy elements
     }
 
-    By emailField = By.cssSelector("input[type='email']");
-    By passwordField = By.cssSelector("input[type='password']");
-    By submitButton = By.cssSelector("button[type='submit']");
+    @FindBy(css = "input[type='email']")
+    private WebElement emailField;
 
-    public void fillEmail(String email){
-        findElement(emailField).sendKeys(email);
+    @FindBy(css = "input[type='password']")
+    private WebElement passwordField;
+
+    @FindBy(css = "button[type='submit']")
+    private WebElement submitButton;
+
+    // Actions
+    public void fillEmail(String email) {
+        emailField.sendKeys(email);
     }
+
     public void fillPassword(String password) {
-        findElement(passwordField).sendKeys(password);
+        passwordField.sendKeys(password);
     }
+
     public void clickSubmit() {
-        findElement(submitButton).click();
+        submitButton.click();
     }
 
-    public void login(){
-        fillEmail("ashur.yonan@testpro.io");
-        fillPassword("BgAIWKi4DxG6");
+    // Convenience method for full login
+    public void login(String email, String password) {
+        fillEmail(email);
+        fillPassword(password);
         clickSubmit();
-
     }
 }
-
