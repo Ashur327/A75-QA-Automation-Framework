@@ -1,14 +1,13 @@
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Parameters;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 import pages.HomePage;
 import pages.LoginPage;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.Duration;
 
 public class RenamePlaylist {
@@ -19,19 +18,18 @@ public class RenamePlaylist {
 
     @BeforeMethod
     @Parameters("baseUrl")
-    public void setup(String baseUrl) {
+    public void setup(String baseUrl) throws MalformedURLException {
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--remote-allow-origins=*");
         options.addArguments("--disable-notifications");
 
-        driver = new ChromeDriver(options);
+        // connect to Grid hub
+        driver = new RemoteWebDriver(new URL("http://localhost:4444/wd/hub"), options);
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
         driver.get(baseUrl);
 
         loginPage = new LoginPage(driver);
         homePage = new HomePage(driver);
 
-        // Login first
         loginPage.login("ashur.yonan@testpro.io", "eUZgLpQa");
     }
 

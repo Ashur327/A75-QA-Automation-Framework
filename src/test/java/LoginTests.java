@@ -1,6 +1,6 @@
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -8,6 +8,8 @@ import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 import pages.LoginPage;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.Duration;
 
 public class LoginTests {
@@ -16,16 +18,22 @@ public class LoginTests {
     LoginPage loginPage;
 
     @BeforeMethod
-    @Parameters("baseUrl")
-    public void setup(String baseUrl) {
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--remote-allow-origins=*");
+    @Parameters({"baseUrl", "browser"})
+    public void setup(String baseUrl, String browser) throws MalformedURLException {
+        // Configure desired capabilities for the chosen browser
+        DesiredCapabilities caps = new DesiredCapabilities();
+        caps.setBrowserName(browser); // "chrome", "firefox", "edge", etc.
 
-        driver = new ChromeDriver(options);
+        // Connect to Selenium Grid Hub
+        driver = new RemoteWebDriver(new URL("http://<hub-ip>:4444/wd/hub"), caps);
+
+        // Optional implicit wait
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+
+        // Open the application URL
         driver.get(baseUrl);
 
-        // Initialize Page Object
+        // Initialize Page Object (Page Factory)
         loginPage = new LoginPage(driver);
 
         // Optional check that the page loaded correctly
@@ -35,7 +43,7 @@ public class LoginTests {
     @Test
     @Parameters({"email", "password", "baseUrl"})
     public void validLoginTest(String email, String password, String baseUrl) {
-        // Using Page Factory POM to perform login
+        // Perform login using Page Factory POM
         loginPage.login(email, password);
 
         // Assert successful login
