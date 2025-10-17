@@ -1,36 +1,37 @@
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.Assert;
 import org.testng.annotations.*;
 import pages.HomePage;
 import pages.LoginPage;
 
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.time.Duration;
 
-public class RenamePlaylist {
+public class RenamePlaylist extends BaseTest {
 
-    WebDriver driver;
+    private static final ThreadLocal<WebDriver> threadDriver = new ThreadLocal<>();
     LoginPage loginPage;
     HomePage homePage;
 
+    public static WebDriver getDriver() {
+        return threadDriver.get();
+    }
+
     @BeforeMethod
-    @Parameters("baseUrl")
-    public void setup(String baseUrl) throws MalformedURLException {
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--disable-notifications");
+    @Parameters({"baseUrl", "browser", "cloudUserName", "cloudAccessKey"})
+    public void setup(String baseUrl, String browser, String cloudUserName, String cloudAccessKey) throws MalformedURLException {
+        // Initialize driver using BaseTest logic (local, grid, or cloud)
+        threadDriver.set(pickBrowser(browser, cloudUserName, cloudAccessKey));
 
-        // connect to Grid hub
-        driver = new RemoteWebDriver(new URL("http://localhost:4444/wd/hub"), options);
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
-        driver.get(baseUrl);
+        getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+        getDriver().get(baseUrl);
 
-        loginPage = new LoginPage(driver);
-        homePage = new HomePage(driver);
+        // Initialize Page Objects with ThreadLocal driver
+        loginPage = new LoginPage(getDriver());
+        homePage = new HomePage(getDriver());
 
-        loginPage.login("ashur.yonan@testpro.io", "eUZgLpQa");
+        // Login using BaseTest credentials
+        loginPage.login(email, password);
     }
 
     @Test
@@ -41,12 +42,17 @@ public class RenamePlaylist {
         homePage.createPlaylistIfNotExists(oldName);
         homePage.renamePlaylist(oldName, newName);
 
-        Assert.assertEquals(homePage.getSuccessBannerText(),
-                "Updated playlist \"" + newName + "\"");
+        Assert.assertEquals(
+                homePage.getSuccessBannerText(),
+                "Updated playlist \"" + newName + "\""
+        );
     }
 
     @AfterMethod
     public void teardown() {
-        if (driver != null) driver.quit();
+        if (getDriver() != null) {
+            getDriver().quit();
+            threadDriver.remove();
+        }
     }
 }

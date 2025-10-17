@@ -5,6 +5,9 @@
     <parameter name="baseUrl" value="https://qa.koel.app/"/>
     <parameter name="email" value="ashur.yonan@testpro.io"/>
     <parameter name="password" value="BgAIWKi4DxG6"/>
+    <parameter name="cloudUserName" value="ashuryonan"/>
+    <parameter name="cloudAccessKey" value="LT_QmLCXj55XcZ8EAY44ed9jdr4xrfAfmmwoRZfXLpm6pDo8j1"/>
+    <parameter name="browser" value="cloud"/>
 
 
     <test name="LoginTest">
