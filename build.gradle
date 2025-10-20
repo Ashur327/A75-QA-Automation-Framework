@@ -23,12 +23,19 @@ test {
 
         // Replace ${testType} with Gradle property 'suite' (default to 'smoke')
         def suiteName = project.findProperty('suite') ?: 'smoke'
-        def tempSuiteFile = project.layout.buildDirectory.file("temp-suite.xml").get().asFile
+        def tempSuiteFile = file("${buildDir}/tmp/temp-suite.xml")
+        tempSuiteFile.parentFile.mkdirs() // ensure folder exists
         tempSuiteFile.text = suiteText.replace('${testType}', suiteName)
 
         suites tempSuiteFile
     }
 
-    // Pass the suite type to system properties so tests can read it if needed
+    // Ensure JUnit XML reports are generated for Jenkins
+    reports {
+        junitXml.required.set(true)
+        html.required.set(true)
+    }
+
+    // Optional: system property for tests
     systemProperty "testType", project.hasProperty("suite") ? project.getProperty("suite") : "smoke"
 }
