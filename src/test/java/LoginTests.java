@@ -2,23 +2,19 @@ import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
 import org.testng.annotations.*;
 import pages.LoginPage;
+
 import java.net.MalformedURLException;
 import java.time.Duration;
 
 public class LoginTests extends BaseTest {
 
-    private static final ThreadLocal<WebDriver> threadDriver = new ThreadLocal<>();
     LoginPage loginPage;
-
-    public static WebDriver getDriver() {
-        return threadDriver.get();
-    }
 
     @BeforeMethod
     @Parameters({"baseUrl", "browser", "cloudUserName", "cloudAccessKey"})
     public void setup(String baseUrl, String browser, String cloudUserName, String cloudAccessKey) throws MalformedURLException {
-        // Get driver from BaseTest (local, grid, or cloud)
-        threadDriver.set(pickBrowser(browser, cloudUserName, cloudAccessKey));
+        // Initialize ThreadLocal driver via BaseTest
+        initDriver(browser, cloudUserName, cloudAccessKey);
 
         getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         getDriver().get(baseUrl);
@@ -27,7 +23,6 @@ public class LoginTests extends BaseTest {
         Assert.assertEquals(getDriver().getCurrentUrl(), baseUrl);
     }
 
-    // ✅ Add group annotation for Jenkins control
     @Test(groups = {"smoke"})
     @Parameters({"email", "password", "baseUrl"})
     public void validLoginTest(String email, String password, String baseUrl) {
@@ -37,9 +32,7 @@ public class LoginTests extends BaseTest {
 
     @AfterMethod
     public void teardown() {
-        if (getDriver() != null) {
-            getDriver().quit();
-            threadDriver.remove();
-        }
+        // Handled by BaseTest
+        super.tearDown();
     }
 }
