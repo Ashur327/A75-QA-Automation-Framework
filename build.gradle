@@ -17,24 +17,25 @@ dependencies {
 
 test {
     useTestNG() {
-        // Read suite XML
-        def suiteFilePath = "src/test/resources/TestNG.xml"
-        def suiteText = file(suiteFilePath).text
-        def tempSuiteFile = file("${layout.buildDirectory.get()}/tmp/temp-suite.xml")
-        tempSuiteFile.parentFile.mkdirs()
-        tempSuiteFile.text = suiteText
-
-        suites tempSuiteFile
-
-        // Include groups dynamically from Gradle property 'suite'
-        def suiteName = project.findProperty('suite') ?: 'smoke'
-        includeGroups suiteName
+        // Use the TestNG XML suite
+        suites file("src/test/resources/TestNG.xml")
+        // Dynamically include groups based on Gradle property 'suite', default to 'smoke'
+        includeGroups project.findProperty('suite') ?: 'smoke'
     }
 
+    // Ensure reports are generated in standard locations
     reports {
         junitXml.required.set(true)
+        junitXml.outputLocation.set(layout.buildDirectory.dir("test-results/test"))
         html.required.set(true)
+        html.outputLocation.set(layout.buildDirectory.dir("reports/tests"))
     }
 
+    testLogging {
+        events "PASSED", "FAILED", "SKIPPED"
+        showStandardStreams = true
+    }
+
+    // Pass the test type to your tests as a system property
     systemProperty "testType", project.findProperty('suite') ?: "smoke"
 }
