@@ -12,33 +12,18 @@
     <parameter name="browser" value="cloud"/>
 
     <test name="LoginTest">
-        <groups>
-            <run>
-                <include name="${testType}"/>
-            </run>
-        </groups>
         <classes>
             <class name="LoginTests"/>
         </classes>
     </test>
 
     <test name="RenamePlaylistTest">
-        <groups>
-            <run>
-                <include name="${testType}"/>
-            </run>
-        </groups>
         <classes>
             <class name="RenamePlaylist"/>
         </classes>
     </test>
 
     <test name="DeletePlaylistTest">
-        <groups>
-            <run>
-                <include name="${testType}"/>
-            </run>
-        </groups>
         <classes>
             <class name="DeletePlaylist"/>
         </classes>
