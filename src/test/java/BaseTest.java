@@ -13,29 +13,30 @@ import java.util.HashMap;
 
 public class BaseTest {
 
-    protected WebDriver driver;
+    // ThreadLocal driver for parallel-safe tests
+    private static final ThreadLocal<WebDriver> threadDriver = new ThreadLocal<>();
+
+    // Optional fields to store credentials
     protected String email;
     protected String password;
 
-    @Parameters({"baseUrl", "email", "password", "cloudUserName", "cloudAccessKey", "browser"})
-    @BeforeMethod
-    public void setUp(String baseUrl, String email, String password,
-                      String cloudUserName, String cloudAccessKey,
-                      @Optional("chrome") String browser) throws MalformedURLException {
+    public static WebDriver getDriver() {
+        return threadDriver.get();
+    }
 
-        this.email = email;
-        this.password = password;
-
-        driver = pickBrowser(browser, cloudUserName, cloudAccessKey);
-
-        driver.manage().window().maximize();
-        driver.get(baseUrl);
+    @Parameters({"browser", "cloudUserName", "cloudAccessKey"})
+    public WebDriver initDriver(@Optional("chrome") String browser, @Optional("") String cloudUserName, @Optional("") String cloudAccessKey) throws MalformedURLException {
+        WebDriver driver = pickBrowser(browser, cloudUserName, cloudAccessKey);
+        threadDriver.set(driver);
+        return driver;
     }
 
     @AfterMethod
     public void tearDown() {
+        WebDriver driver = getDriver();
         if (driver != null) {
             driver.quit();
+            threadDriver.remove();
         }
     }
 
@@ -44,22 +45,18 @@ public class BaseTest {
             case "firefox":
                 WebDriverManager.firefoxdriver().setup();
                 return new FirefoxDriver();
-
             case "edge":
                 WebDriverManager.edgedriver().setup();
                 return new EdgeDriver();
-
             case "cloud":
                 return lambdaTest(cloudUserName, cloudAccessKey);
-
             case "chrome":
                 WebDriverManager.chromedriver().setup();
                 ChromeOptions chromeOptions = new ChromeOptions();
                 chromeOptions.addArguments("--remote-allow-origins=*");
                 return new ChromeDriver(chromeOptions);
-
             default:
-                throw new IllegalArgumentException("Unknown browser: " + browser);
+                throw new IllegalArgumentException("Unsupported browser: " + browser);
         }
     }
 
