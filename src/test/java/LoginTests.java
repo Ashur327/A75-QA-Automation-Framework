@@ -16,10 +16,9 @@ public class LoginTests extends BaseTest {
                           @Optional("") String cloudUserName,
                           @Optional("") String cloudAccessKey) throws Exception {
 
-        // BaseTest's @BeforeMethod already sets up driver and credentials
-        super.setup(email, password, browser, cloudUserName, cloudAccessKey);
-
+        // BaseTest's @BeforeMethod already runs automatically
         WebDriver driver = getDriver();
+
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         driver.get(baseUrl);
 
@@ -30,13 +29,14 @@ public class LoginTests extends BaseTest {
     @Test(groups = {"smoke"})
     @Parameters({"baseUrl"})
     public void validLoginTest(String baseUrl) {
-        // use BaseTest fields for credentials
+        // Use credentials from BaseTest
         loginPage.login(email, password);
         Assert.assertEquals(getDriver().getCurrentUrl(), baseUrl + "#!/home");
     }
 
     @AfterMethod
     public void teardownTest() {
+        // Cleanup handled by BaseTest
         super.tearDown();
     }
 }

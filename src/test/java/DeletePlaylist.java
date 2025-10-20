@@ -13,21 +13,20 @@ public class DeletePlaylist extends BaseTest {
 
     @BeforeMethod
     @Parameters({"baseUrl", "browser", "cloudUserName", "cloudAccessKey"})
-    public void setup(String baseUrl,
-                      @Optional("chrome") String browser,
-                      @Optional("") String cloudUserName,
-                      @Optional("") String cloudAccessKey) throws Exception {
+    public void setupTest(String baseUrl,
+                          @Optional("chrome") String browser,
+                          @Optional("") String cloudUserName,
+                          @Optional("") String cloudAccessKey) throws Exception {
 
-        // Driver is already initialized in BaseTest's @BeforeMethod
+        // BaseTest's @BeforeMethod already runs
         WebDriver driver = getDriver();
-
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         driver.get(baseUrl);
 
         loginPage = new LoginPage(driver);
         homePage = new HomePage(driver);
 
-        // Login using credentials stored in BaseTest
+        // Login using credentials injected by BaseTest
         loginPage.login(email, password);
     }
 
@@ -45,7 +44,6 @@ public class DeletePlaylist extends BaseTest {
 
     @AfterMethod
     public void teardownTest() {
-        // Cleanup handled by BaseTest
         super.tearDown();
     }
 }

@@ -13,21 +13,20 @@ public class RenamePlaylist extends BaseTest {
 
     @BeforeMethod
     @Parameters({"baseUrl", "browser", "cloudUserName", "cloudAccessKey"})
-    public void setup(String baseUrl,
-                      @Optional("chrome") String browser,
-                      @Optional("") String cloudUserName,
-                      @Optional("") String cloudAccessKey) throws Exception {
+    public void setupTest(String baseUrl,
+                          @Optional("chrome") String browser,
+                          @Optional("") String cloudUserName,
+                          @Optional("") String cloudAccessKey) throws Exception {
 
-        // BaseTest's @BeforeMethod already sets up driver
+        // BaseTest's @BeforeMethod already runs
         WebDriver driver = getDriver();
-
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
         driver.get(baseUrl);
 
         loginPage = new LoginPage(driver);
         homePage = new HomePage(driver);
 
-        // Login using credentials stored in BaseTest
+        // Login using credentials injected by BaseTest
         loginPage.login(email, password);
     }
 
@@ -47,7 +46,6 @@ public class RenamePlaylist extends BaseTest {
 
     @AfterMethod
     public void teardownTest() {
-        // Cleanup handled by BaseTest
         super.tearDown();
     }
 }
