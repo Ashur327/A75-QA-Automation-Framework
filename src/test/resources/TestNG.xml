@@ -1,34 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+
 <suite name="TestNGSuite">
-    <!-- Parameters -->
+
+    <!-- Global parameters -->
     <parameter name="baseUrl" value="https://qa.koel.app/"/>
     <parameter name="email" value="ashur.yonan@testpro.io"/>
     <parameter name="password" value="BgAIWKi4DxG6"/>
     <parameter name="cloudUserName" value="ashuryonan"/>
     <parameter name="cloudAccessKey" value="LT_QmLCXj55XcZ8EAY44ed9jdr4xrfAfmmwoRZfXLpm6pDo8j1"/>
     <parameter name="browser" value="cloud"/>
-    <parameter name="testType" value="${testType}"/>
 
-    <!-- Groups must come here, before <test> elements -->
-    <groups>
-        <run>
-            <include name="${testType}"/>
-        </run>
-    </groups>
-
-    <!-- Test classes -->
     <test name="LoginTest">
+        <groups>
+            <run>
+                <include name="${testType}"/>
+            </run>
+        </groups>
         <classes>
             <class name="LoginTests"/>
         </classes>
     </test>
+
     <test name="RenamePlaylistTest">
+        <groups>
+            <run>
+                <include name="${testType}"/>
+            </run>
+        </groups>
         <classes>
             <class name="RenamePlaylist"/>
         </classes>
     </test>
+
     <test name="DeletePlaylistTest">
+        <groups>
+            <run>
+                <include name="${testType}"/>
+            </run>
+        </groups>
         <classes>
             <class name="DeletePlaylist"/>
         </classes>
     </test>
+
 </suite>

@@ -17,9 +17,18 @@ dependencies {
 
 test {
     useTestNG() {
-        suites "src/test/resources/TestNG.xml"
+        // Read the suite XML
+        def suiteFilePath = "src/test/resources/TestNG.xml"
+        def suiteText = file(suiteFilePath).text
+
+        // Replace ${testType} with Gradle property 'suite' (default to 'smoke')
+        def suiteName = project.findProperty('suite') ?: 'smoke'
+        def tempSuiteFile = file("${buildDir}/temp-suite.xml")
+        tempSuiteFile.text = suiteText.replace('${testType}', suiteName)
+
+        suites tempSuiteFile
     }
 
-
-    systemProperty "testType", project.hasProperty("testType") ? project.getProperty("testType") : "smoke"
+    // Pass the suite type to system properties so tests can read it if needed
+    systemProperty "testType", project.hasProperty("suite") ? project.getProperty("suite") : "smoke"
 }
