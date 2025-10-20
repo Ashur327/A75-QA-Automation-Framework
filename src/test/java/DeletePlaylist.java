@@ -18,16 +18,17 @@ public class DeletePlaylist extends BaseTest {
                           @Optional("") String cloudUserName,
                           @Optional("") String cloudAccessKey) throws Exception {
 
-        // BaseTest's @BeforeMethod already runs
+        super.setup(browser, cloudUserName, cloudAccessKey);
         WebDriver driver = getDriver();
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
         driver.get(baseUrl);
 
         loginPage = new LoginPage(driver);
         homePage = new HomePage(driver);
 
-        // Login using credentials injected by BaseTest
-        loginPage.login(email, password);
+        // Hardcoded login
+        loginPage.login("ashur.yonan@testpro.io", "BgAIWKi4DxG6");
     }
 
     @Test(groups = {"regression"})
@@ -36,10 +37,7 @@ public class DeletePlaylist extends BaseTest {
 
         homePage.deletePlaylist(playlistName);
 
-        Assert.assertEquals(
-                homePage.getSuccessBannerText(),
-                "Deleted playlist \"" + playlistName + ".\""
-        );
+        Assert.assertEquals(homePage.getSuccessBannerText(), "Deleted playlist \"" + playlistName + ".\"");
     }
 
     @AfterMethod

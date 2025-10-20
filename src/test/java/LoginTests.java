@@ -16,23 +16,22 @@ public class LoginTests extends BaseTest {
                           @Optional("") String cloudUserName,
                           @Optional("") String cloudAccessKey) throws Exception {
 
-        // Call BaseTest.setup with all 5 arguments
-        super.setup(email, password, browser, cloudUserName, cloudAccessKey);
-
+        super.setup(browser, cloudUserName, cloudAccessKey);
         WebDriver driver = getDriver();
+
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         driver.get(baseUrl);
 
         loginPage = new LoginPage(driver);
-        Assert.assertEquals(driver.getCurrentUrl(), baseUrl);
+
+        // Hardcoded login credentials
+        loginPage.login("ashur.yonan@testpro.io", "BgAIWKi4DxG6");
     }
 
     @Test(groups = {"smoke"})
-    @Parameters({"baseUrl"})
-    public void validLoginTest(String baseUrl) {
-        // use BaseTest fields for credentials
-        loginPage.login(email, password);
-        Assert.assertEquals(getDriver().getCurrentUrl(), baseUrl + "#!/home");
+    public void validLoginTest() {
+        // After login, check home URL
+        Assert.assertEquals(getDriver().getCurrentUrl(), "https://qa.koel.app/#!/home");
     }
 
     @AfterMethod

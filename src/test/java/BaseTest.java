@@ -14,23 +14,16 @@ import java.util.HashMap;
 public class BaseTest {
 
     private static final ThreadLocal<WebDriver> threadDriver = new ThreadLocal<>();
-    protected String email;
-    protected String password;
 
     public static WebDriver getDriver() {
         return threadDriver.get();
     }
 
-    @Parameters({"email", "password", "browser", "cloudUserName", "cloudAccessKey"})
+    @Parameters({"browser", "cloudUserName", "cloudAccessKey"})
     @BeforeMethod(alwaysRun = true)
-    public void setup(@Optional("") String email,
-                      @Optional("") String password,
-                      @Optional("chrome") String browser,
+    public void setup(@Optional("chrome") String browser,
                       @Optional("") String cloudUserName,
                       @Optional("") String cloudAccessKey) throws MalformedURLException {
-
-        this.email = email;
-        this.password = password;
 
         WebDriver driver = pickBrowser(browser, cloudUserName, cloudAccessKey);
         threadDriver.set(driver);
@@ -46,7 +39,7 @@ public class BaseTest {
         }
     }
 
-    public WebDriver pickBrowser(String browser, String cloudUserName, String cloudAccessKey) throws MalformedURLException {
+    private WebDriver pickBrowser(String browser, String cloudUserName, String cloudAccessKey) throws MalformedURLException {
         switch (browser.toLowerCase()) {
             case "firefox":
                 WebDriverManager.firefoxdriver().setup();
@@ -57,16 +50,15 @@ public class BaseTest {
             case "cloud":
                 return lambdaTest(cloudUserName, cloudAccessKey);
             case "chrome":
+            default:
                 WebDriverManager.chromedriver().setup();
                 ChromeOptions chromeOptions = new ChromeOptions();
                 chromeOptions.addArguments("--remote-allow-origins=*");
                 return new ChromeDriver(chromeOptions);
-            default:
-                throw new IllegalArgumentException("Unsupported browser: " + browser);
         }
     }
 
-    public WebDriver lambdaTest(String cloudUserName, String cloudAccessKey) throws MalformedURLException {
+    private WebDriver lambdaTest(String cloudUserName, String cloudAccessKey) throws MalformedURLException {
         String hubURL = "https://hub.lambdatest.com/wd/hub";
 
         ChromeOptions browserOptions = new ChromeOptions();
@@ -76,7 +68,7 @@ public class BaseTest {
         HashMap<String, Object> ltOptions = new HashMap<>();
         ltOptions.put("username", cloudUserName);
         ltOptions.put("accessKey", cloudAccessKey);
-        ltOptions.put("project", "Untitled");
+        ltOptions.put("project", "QA Automation");
         ltOptions.put("selenium_version", "4.0.0");
         ltOptions.put("w3c", true);
 
