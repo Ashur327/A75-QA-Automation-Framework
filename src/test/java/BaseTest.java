@@ -57,8 +57,7 @@ public class BaseTest {
             case "cloud":
                 return lambdaTest(cloudUserName, cloudAccessKey);
 
-            case "default (chrome)":
-            default:
+            case "chrome":
                 WebDriverManager.chromedriver().setup();
                 ChromeOptions chromeOptions = new ChromeOptions();
                 chromeOptions.addArguments("--remote-allow-origins=*");
