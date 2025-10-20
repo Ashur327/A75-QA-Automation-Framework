@@ -16,22 +16,35 @@ public class BaseTest {
     // ThreadLocal driver for parallel-safe tests
     private static final ThreadLocal<WebDriver> threadDriver = new ThreadLocal<>();
 
-    // Optional fields to store credentials
+    // Credentials
     protected String email;
     protected String password;
 
-    public static WebDriver getDriver() {
+    /** Get the current thread's driver */
+    protected static WebDriver getDriver() {
         return threadDriver.get();
     }
 
-    @Parameters({"browser", "cloudUserName", "cloudAccessKey"})
-    public WebDriver initDriver(@Optional("chrome") String browser, @Optional("") String cloudUserName, @Optional("") String cloudAccessKey) throws MalformedURLException {
+    /** Initialize the driver before each test */
+    @Parameters({"email", "password", "browser", "cloudUserName", "cloudAccessKey"})
+    @BeforeMethod(alwaysRun = true)
+    public void setup(@Optional("") String email,
+                      @Optional("") String password,
+                      @Optional("chrome") String browser,
+                      @Optional("") String cloudUserName,
+                      @Optional("") String cloudAccessKey) throws MalformedURLException {
+
+        this.email = email;
+        this.password = password;
+
         WebDriver driver = pickBrowser(browser, cloudUserName, cloudAccessKey);
         threadDriver.set(driver);
-        return driver;
+
+        driver.manage().window().maximize();
     }
 
-    @AfterMethod
+    /** Quit and remove driver after each test */
+    @AfterMethod(alwaysRun = true)
     public void tearDown() {
         WebDriver driver = getDriver();
         if (driver != null) {
@@ -40,7 +53,8 @@ public class BaseTest {
         }
     }
 
-    public WebDriver pickBrowser(String browser, String cloudUserName, String cloudAccessKey) throws MalformedURLException {
+    /** Pick a browser or cloud driver */
+    protected WebDriver pickBrowser(String browser, String cloudUserName, String cloudAccessKey) throws MalformedURLException {
         switch (browser.toLowerCase()) {
             case "firefox":
                 WebDriverManager.firefoxdriver().setup();
@@ -60,7 +74,8 @@ public class BaseTest {
         }
     }
 
-    public WebDriver lambdaTest(String cloudUserName, String cloudAccessKey) throws MalformedURLException {
+    /** LambdaTest remote driver setup */
+    protected WebDriver lambdaTest(String cloudUserName, String cloudAccessKey) throws MalformedURLException {
         String hubURL = "https://hub.lambdatest.com/wd/hub";
 
         ChromeOptions browserOptions = new ChromeOptions();

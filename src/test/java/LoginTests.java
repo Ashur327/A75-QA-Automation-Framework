@@ -3,24 +3,28 @@ import org.testng.Assert;
 import org.testng.annotations.*;
 import pages.LoginPage;
 
-import java.net.MalformedURLException;
 import java.time.Duration;
 
 public class LoginTests extends BaseTest {
 
-    LoginPage loginPage;
+    private LoginPage loginPage;
 
     @BeforeMethod
     @Parameters({"baseUrl", "browser", "cloudUserName", "cloudAccessKey"})
-    public void setup(String baseUrl, String browser, String cloudUserName, String cloudAccessKey) throws MalformedURLException {
-        // Initialize ThreadLocal driver via BaseTest
-        initDriver(browser, cloudUserName, cloudAccessKey);
+    public void setupTest(String baseUrl,
+                          @Optional("chrome") String browser,
+                          @Optional("") String cloudUserName,
+                          @Optional("") String cloudAccessKey) throws Exception {
 
-        getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-        getDriver().get(baseUrl);
+        // BaseTest's @BeforeMethod already sets up driver and credentials
+        // Just retrieve it for this test
+        WebDriver driver = getDriver();
 
-        loginPage = new LoginPage(getDriver());
-        Assert.assertEquals(getDriver().getCurrentUrl(), baseUrl);
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        driver.get(baseUrl);
+
+        loginPage = new LoginPage(driver);
+        Assert.assertEquals(driver.getCurrentUrl(), baseUrl);
     }
 
     @Test(groups = {"smoke"})
@@ -31,8 +35,8 @@ public class LoginTests extends BaseTest {
     }
 
     @AfterMethod
-    public void teardown() {
-        // Handled by BaseTest
+    public void teardownTest() {
+        // driver cleanup handled by BaseTest
         super.tearDown();
     }
 }

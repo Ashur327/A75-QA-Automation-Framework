@@ -4,27 +4,30 @@ import org.testng.annotations.*;
 import pages.HomePage;
 import pages.LoginPage;
 
-import java.net.MalformedURLException;
 import java.time.Duration;
 
 public class RenamePlaylist extends BaseTest {
 
-    LoginPage loginPage;
-    HomePage homePage;
+    private LoginPage loginPage;
+    private HomePage homePage;
 
     @BeforeMethod
     @Parameters({"baseUrl", "browser", "cloudUserName", "cloudAccessKey"})
-    public void setup(String baseUrl, String browser, String cloudUserName, String cloudAccessKey) throws MalformedURLException {
-        // Initialize ThreadLocal driver via BaseTest
-        initDriver(browser, cloudUserName, cloudAccessKey);
+    public void setup(String baseUrl,
+                      @Optional("chrome") String browser,
+                      @Optional("") String cloudUserName,
+                      @Optional("") String cloudAccessKey) throws Exception {
 
-        getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
-        getDriver().get(baseUrl);
+        // BaseTest's @BeforeMethod already sets up driver
+        WebDriver driver = getDriver();
 
-        loginPage = new LoginPage(getDriver());
-        homePage = new HomePage(getDriver());
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+        driver.get(baseUrl);
 
-        // Login using BaseTest credentials
+        loginPage = new LoginPage(driver);
+        homePage = new HomePage(driver);
+
+        // Login using credentials stored in BaseTest
         loginPage.login(email, password);
     }
 
@@ -43,8 +46,8 @@ public class RenamePlaylist extends BaseTest {
     }
 
     @AfterMethod
-    public void teardown() {
-        // Handled by BaseTest
+    public void teardownTest() {
+        // Cleanup handled by BaseTest
         super.tearDown();
     }
 }
