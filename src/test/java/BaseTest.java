@@ -14,23 +14,22 @@ import java.util.HashMap;
 public class BaseTest {
 
     protected WebDriver driver;
+    protected String email;
+    protected String password;
 
-    // Parameters from testng.xml
     @Parameters({"baseUrl", "email", "password", "cloudUserName", "cloudAccessKey", "browser"})
     @BeforeMethod
-    public void setUp(String baseUrl, String email, String password, String cloudUserName, String cloudAccessKey, @Optional("chrome") String browser) throws MalformedURLException {
-        // Initialize driver based on parameter
-        driver = pickBrowser(browser, cloudUserName, cloudAccessKey);
+    public void setUp(String baseUrl, String email, String password,
+                      String cloudUserName, String cloudAccessKey,
+                      @Optional("chrome") String browser) throws MalformedURLException {
 
-        // Maximize or any default settings
-        driver.manage().window().maximize();
-
-        // Navigate to baseUrl
-        driver.get(baseUrl);
-
-        // Optionally, store credentials in fields for login tests
         this.email = email;
         this.password = password;
+
+        driver = pickBrowser(browser, cloudUserName, cloudAccessKey);
+
+        driver.manage().window().maximize();
+        driver.get(baseUrl);
     }
 
     @AfterMethod
@@ -39,10 +38,6 @@ public class BaseTest {
             driver.quit();
         }
     }
-
-    // Optional fields to store credentials
-    protected String email;
-    protected String password;
 
     public WebDriver pickBrowser(String browser, String cloudUserName, String cloudAccessKey) throws MalformedURLException {
         switch (browser.toLowerCase()) {
@@ -62,6 +57,9 @@ public class BaseTest {
                 ChromeOptions chromeOptions = new ChromeOptions();
                 chromeOptions.addArguments("--remote-allow-origins=*");
                 return new ChromeDriver(chromeOptions);
+
+            default:
+                throw new IllegalArgumentException("Unknown browser: " + browser);
         }
     }
 
