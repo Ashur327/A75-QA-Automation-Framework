@@ -23,7 +23,7 @@ test {
 
         // Replace ${testType} with Gradle property 'suite' (default to 'smoke')
         def suiteName = project.findProperty('suite') ?: 'smoke'
-        def tempSuiteFile = file("${buildDir}/temp-suite.xml")
+        def tempSuiteFile = project.layout.buildDirectory.file("temp-suite.xml").get().asFile
         tempSuiteFile.text = suiteText.replace('${testType}', suiteName)
 
         suites tempSuiteFile
