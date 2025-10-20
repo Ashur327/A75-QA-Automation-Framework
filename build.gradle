@@ -19,4 +19,7 @@ test {
     useTestNG() {
         suites "src/test/resources/TestNG.xml"
     }
+
+
+    systemProperty "testType", project.hasProperty("testType") ? project.getProperty("testType") : "smoke"
 }

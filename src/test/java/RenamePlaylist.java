@@ -3,7 +3,6 @@ import org.testng.Assert;
 import org.testng.annotations.*;
 import pages.HomePage;
 import pages.LoginPage;
-
 import java.net.MalformedURLException;
 import java.time.Duration;
 
@@ -34,7 +33,8 @@ public class RenamePlaylist extends BaseTest {
         loginPage.login(email, password);
     }
 
-    @Test
+    // ✅ Add group for Jenkins smoke/regression control
+    @Test(groups = {"regression"})
     public void renamePlaylistTest() {
         String oldName = "fart";
         String newName = "fart fart fart";

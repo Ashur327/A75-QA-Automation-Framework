@@ -57,6 +57,7 @@ public class BaseTest {
             case "cloud":
                 return lambdaTest(cloudUserName, cloudAccessKey);
 
+            case "default (chrome)":
             default:
                 WebDriverManager.chromedriver().setup();
                 ChromeOptions chromeOptions = new ChromeOptions();

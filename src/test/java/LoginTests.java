@@ -2,7 +2,6 @@ import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
 import org.testng.annotations.*;
 import pages.LoginPage;
-
 import java.net.MalformedURLException;
 import java.time.Duration;
 
@@ -28,7 +27,8 @@ public class LoginTests extends BaseTest {
         Assert.assertEquals(getDriver().getCurrentUrl(), baseUrl);
     }
 
-    @Test
+    // ✅ Add group annotation for Jenkins control
+    @Test(groups = {"smoke"})
     @Parameters({"email", "password", "baseUrl"})
     public void validLoginTest(String email, String password, String baseUrl) {
         loginPage.login(email, password);

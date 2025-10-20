@@ -3,7 +3,6 @@ import org.testng.Assert;
 import org.testng.annotations.*;
 import pages.HomePage;
 import pages.LoginPage;
-
 import java.net.MalformedURLException;
 import java.time.Duration;
 
@@ -34,7 +33,8 @@ public class DeletePlaylist extends BaseTest {
         loginPage.login(email, password);
     }
 
-    @Test
+    // ✅ Add group for smoke/regression control
+    @Test(groups = {"regression"})
     public void deletePlaylistTest() {
         String playlistName = "fart";
 
